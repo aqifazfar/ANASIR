@@ -1,0 +1,13 @@
+/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/CMakeFiles/anasirlib.dir
+/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/CMakeFiles/edit_cache.dir
+/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/CMakeFiles/list_install_components.dir
+/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/CMakeFiles/install.dir
+/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/CMakeFiles/install/local.dir
+/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/CMakeFiles/install/strip.dir
+/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/core/CMakeFiles/edit_cache.dir
+/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/core/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/core/CMakeFiles/list_install_components.dir
+/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/core/CMakeFiles/install.dir
+/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/core/CMakeFiles/install/local.dir
+/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/core/CMakeFiles/install/strip.dir
