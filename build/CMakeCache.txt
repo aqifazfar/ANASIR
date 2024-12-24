@@ -26,8 +26,11 @@ ANASIR_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 ANASIR_SOURCE_DIR:STATIC=/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR
 
+//No help, variable specified on the command line.
+BUILD_TEST:UNINITIALIZED=ON
+
 //Build Test Files
-BUILD_TEST:BOOL=OFF
+BUILD_TESTS:BOOL=ON
 
 //Path to a program.
 CMAKE_ADDR2LINE:FILEPATH=/usr/bin/addr2line
@@ -302,6 +305,15 @@ testCF_IS_TOP_LEVEL:STATIC=OFF
 //Value Computed by CMake
 testCF_SOURCE_DIR:STATIC=/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/tests/CF
 
+//Value Computed by CMake
+testEKF_BINARY_DIR:STATIC=/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/tests/EKF
+
+//Value Computed by CMake
+testEKF_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+testEKF_SOURCE_DIR:STATIC=/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/tests/EKF
+
 
 ########################
 # INTERNAL cache entries
@@ -439,7 +451,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=2
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=5
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

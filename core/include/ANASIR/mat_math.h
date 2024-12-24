@@ -4,8 +4,8 @@
 
 namespace Matrix
 {
-	template <typename T, std::uint32_t m, std::uint32_t n>
-	void Sub(T (&dst)[m * n], const T (&A)[m * n], const T (&B)[m * n])
+	template <std::uint32_t m, std::uint32_t n>
+	void Sub(double (&dst)[m * n], const double (&A)[m * n], const double (&B)[m * n])
 	{
 		for (std::uint32_t i = 0; i < (m * n); i++)
 		{
@@ -13,8 +13,8 @@ namespace Matrix
 		}
 	}
 
-	template <typename T, std::uint32_t m, std::uint32_t n>
-	void Add(T (&dst)[m * n], const T (&A)[m * n], const T (&B)[m * n])
+	template <std::uint32_t m, std::uint32_t n>
+	void Add(double (&dst)[m * n], const double (&A)[m * n], const double (&B)[m * n])
 	{
 		for (std::uint32_t i = 0; i < (m * n); i++)
 		{
@@ -22,8 +22,8 @@ namespace Matrix
 		}
 	}
 
-	template <typename T, std::uint32_t ARows, std::uint32_t AColumns, std::uint32_t BColumns>
-	void Mul(T (&dst)[ARows * BColumns], const T (&A)[ARows * AColumns], const T (&B)[AColumns * BColumns])
+	template <std::uint32_t ARows, std::uint32_t AColumns, std::uint32_t BColumns>
+	void Mul(double (&dst)[ARows * BColumns], const double (&A)[ARows * AColumns], const double (&B)[AColumns * BColumns])
 	{
 		std::uint32_t i, j, k;
 
@@ -40,8 +40,8 @@ namespace Matrix
 			}
 		}
 	}
-	template <typename T, std::uint32_t n>
-	void CholeskyDecomposition(T (&dst)[n * n], const T (&A)[n * n])
+	template <std::uint32_t n>
+	void CholeskyDecomposition(double (&dst)[n * n], const double (&A)[n * n])
 	{
 		std::uint32_t i, j, k;
 
@@ -51,7 +51,7 @@ namespace Matrix
 			{
 				dst[i * n + j] = 0;
 
-				T sum = 0;
+				double sum = 0;
 
 				for (k = 0; k < j; k++)
 				{
@@ -70,11 +70,11 @@ namespace Matrix
 		}
 	}
 
-	template <typename T, std::uint32_t n>
-	void Inv(T (&dst)[n * n], const T (&A)[n * n])
+	template <std::uint32_t n>
+	void Inv(double (&dst)[n * n], const double (&A)[n * n])
 	{
 		std::uint32_t i, j, k;
-		T sum;
+		double sum;
 
 		for (i = 0; i < n; i++)
 		{
@@ -98,8 +98,8 @@ namespace Matrix
 		}
 	}
 
-	template <typename T, std::uint32_t m, std::uint32_t n>
-	void Scale(T (&dst)[m * n], const T (&A)[m * n], const T Scalar)
+	template <std::uint32_t m, std::uint32_t n>
+	void Scale(double (&dst)[m * n], const double (&A)[m * n], const double Scalar)
 	{
 		std::uint32_t i;
 		for (i = 0; i < (m * n); i++)
@@ -108,11 +108,11 @@ namespace Matrix
 		}
 	}
 
-	template <typename T, std::uint32_t m, std::uint32_t n>
-	void Transpose(T (&A)[m * n])
+	template <std::uint32_t m, std::uint32_t n>
+	void Transpose(double (&A)[m * n])
 	{
 		std::uint32_t i, j;
-		T temp[m * n] = {};
+		double temp[m * n] = {};
 		std::memcpy(temp, A, sizeof(A));
 
 		for (i = 0; i < m; i++)
@@ -124,8 +124,8 @@ namespace Matrix
 		};
 	}
 
-	template <typename T, std::uint32_t n>
-	void Diagonal(T (&dst)[n * n], T val)
+	template <std::uint32_t n>
+	void Diagonal(double (&dst)[n * n], double val)
 	{
 		std::uint32_t i, j;
 

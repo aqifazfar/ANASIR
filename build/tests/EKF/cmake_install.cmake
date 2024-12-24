@@ -1,4 +1,4 @@
-# Install script for directory: /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/tests
+# Install script for directory: /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/tests/EKF
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,15 +40,5 @@ endif()
 # Set path to fallback-tool for dependency-resolution.
 if(NOT DEFINED CMAKE_OBJDUMP)
   set(CMAKE_OBJDUMP "/usr/bin/objdump")
-endif()
-
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for the subdirectory.
-  include("/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/tests/CF/cmake_install.cmake")
-endif()
-
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for the subdirectory.
-  include("/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/tests/EKF/cmake_install.cmake")
 endif()
 

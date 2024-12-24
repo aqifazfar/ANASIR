@@ -11,26 +11,26 @@
 
 namespace anasir
 {
-  template <typename T>
+  template <typename double>
   class MADF
   {
   private:
-    T a[3];
-    T g[3];
-    T m[3];
-    T q[4];
-    T Beta;
-    T dt;
-    static inline T sqr(T x)
+    double a[3];
+    double g[3];
+    double m[3];
+    double q[4];
+    double Beta;
+    double dt;
+    static inline double sqr(double x)
     {
 
       return x * x;
     }
 
-    static T Norm(T *x, T n)
+    static double Norm(double *x, double n)
     {
 
-      T sum;
+      double sum;
 
       sum = 0;
 
@@ -49,13 +49,13 @@ namespace anasir
     }
 
   public:
-    void Madgwick_Filter_Init(T Kp, T Ki, T Kd, T Beta, T dt, T (&AccIn)[3], T (&GyroIn)[3], T (&MagIn)[3])
+    void Madgwick_Filter_Init(double Kp, double Ki, double Kd, double Beta, double dt, double (&AccIn)[3], double (&GyroIn)[3], double (&MagIn)[3])
     {
       Kp = Kp;
       Ki = Ki;
-      std::memset(m, MagIn, 3 * sizeof(T));
-      std::memset(g, GyroIn, 3 * sizeof(T));
-      std::memset(a, AccIn, 3 * sizeof(T));
+      std::memset(m, MagIn, 3 * sizeof(double));
+      std::memset(g, GyroIn, 3 * sizeof(double));
+      std::memset(a, AccIn, 3 * sizeof(double));
 
       dt = dt;
 
@@ -65,7 +65,7 @@ namespace anasir
       q[3] = 0.00f;
     }
 
-    T Madgwick_Filter_IMU()
+    double Madgwick_Filter_IMU()
     {
 
       // Compute only when accelerometer data   are available
@@ -79,7 +79,7 @@ namespace anasir
       Norm(a, 3);
 
       // Orientation increment from gyroscope
-      T qg0, qg1, qg2, qg3;
+      double qg0, qg1, qg2, qg3;
 
       qg0 = 0.5f * (-q[1] * g[0] - q[2] * g[1] - q[3] * g[2]);
 
@@ -90,7 +90,7 @@ namespace anasir
       qg3 = 0.5f * (q[0] * g[2] + q[1] * g[1] - q[2] * g[0]);
 
       // Gradient Descent Algorithm
-      T df[4], f[3];
+      double df[4], f[3];
 
       // Compute f(q , a)
       f[0] = 2.0f * (q[1] * q[3] - q[0] * q[2]) - a[0];
@@ -129,7 +129,7 @@ namespace anasir
       return 0; // success
     }
 
-    T Madgwick_Filter_AHRS()
+    double Madgwick_Filter_AHRS()
     {
 
       // Compute only when accelerometer data   are available
@@ -152,7 +152,7 @@ namespace anasir
       Norm(m, 3);
 
       // Orientation increment from gyroscope
-      T qg0, qg1, qg2, qg3;
+      double qg0, qg1, qg2, qg3;
 
       qg0 = 0.5f * (-q[1] * g[0] - q[2] * g[1] - q[3] * g[2]);
 
@@ -163,7 +163,7 @@ namespace anasir
       qg3 = 0.5f * (q[0] * g[2] + q[1] * g[1] - q[2] * g[0]);
 
       // Compute reference direction of earth magnetic field, B
-      T hx, hy, bx, bz;
+      double hx, hy, bx, bz;
 
       hx = 2.0f * (m[0] * (0.5f - sqr(q[2]) - sqr(q[3])) + m[1] * (q[1] * q[2] - q[0] * q[3]) + m[2] * (q[1] * q[3] + q[0] * q[2]));
 
@@ -174,7 +174,7 @@ namespace anasir
       bz = 2.0f * (m[0] * (q[1] * q[3] - q[0] * q[2]) + m[1] * (q[2] * q[3] + q[0] * q[1]) + m[2] * (0.5f - sqr(q[1]) - sqr(q[2])));
 
       // Gradient Descent Algorithm
-      T df[4], fqa[3], fqm[3];
+      double df[4], fqa[3], fqm[3];
 
       // Compute f(q,a)
       fqa[0] = 2.0f * (q[1] * q[3] - q[0] * q[2]) - a[0];

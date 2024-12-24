@@ -10,30 +10,30 @@
 
 namespace anasir
 {
-  template <typename T>
+  template <typename double>
   class MAHF
   {
   private:
-    T a[3];
-    T g[3];
-    T m[3];
+    double a[3];
+    double g[3];
+    double m[3];
 
-    T q[4];
-    T Kp;
-    T Ki;
-    T dt;
+    double q[4];
+    double Kp;
+    double Ki;
+    double dt;
 
-    static inline T
-    sqr(T x)
+    static inline double
+    sqr(double x)
     {
 
       return x * x;
     }
 
-    static T Norm(T &x, T n)
+    static double Norm(double &x, double n)
     {
 
-      T sum;
+      double sum;
 
       sum = 0;
 
@@ -52,13 +52,13 @@ namespace anasir
     }
 
   public:
-    void Mahony_Filter_Init(T Kp, T Ki, T (&AccIn)[3], T (&GyroIn)[3], T (&MagIn)[3])
+    void Mahony_Filter_Init(double Kp, double Ki, double (&AccIn)[3], double (&GyroIn)[3], double (&MagIn)[3])
     {
       Kp = Kp;
       Ki = Ki;
-      std::memset(m, MagIn, 3 * sizeof(T));
-      std::memset(g, GyroIn, 3 * sizeof(T));
-      std::memset(a, AccIn, 3 * sizeof(T));
+      std::memset(m, MagIn, 3 * sizeof(double));
+      std::memset(g, GyroIn, 3 * sizeof(double));
+      std::memset(a, AccIn, 3 * sizeof(double));
 
       q[0] = 1.00f;
       q[1] = 0.00f;
@@ -66,10 +66,10 @@ namespace anasir
       q[3] = 0.00f;
     }
 
-    T Mahony_Filter_IMU()
+    double Mahony_Filter_IMU()
     {
 
-      T vx, vy, vz, error[3];
+      double vx, vy, vz, error[3];
       std::uint8_t i;
 
       // Compute only when accelerometer data are available
@@ -105,7 +105,7 @@ namespace anasir
         g[i] += Kp * error[i] + Ki * error[i];
       }
 
-      T qw, qx, qy, qz;
+      double qw, qx, qy, qz;
 
       qw = q[0];
       qx = q[1];
@@ -125,7 +125,7 @@ namespace anasir
       return 0;
     }
 
-    T Mahony_Filter_AHRS()
+    double Mahony_Filter_AHRS()
     {
 
       // Compute only when accelerometer data are available
@@ -147,7 +147,7 @@ namespace anasir
       Norm(a, 3);
       Norm(m, 3);
 
-      T vx, vy, vz, hx, hy, bx, bz, wx, wy, wz, error[3];
+      double vx, vy, vz, hx, hy, bx, bz, wx, wy, wz, error[3];
       std::uint8_t i;
 
       // Compute reference direction of earth magnetic field, B
@@ -195,7 +195,7 @@ namespace anasir
         g[i] += Kp * error[i] + Ki * error[i];
       }
 
-      T qw, qx, qy, qz;
+      double qw, qx, qy, qz;
 
       qw = q[0];
       qx = q[1];

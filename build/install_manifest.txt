@@ -4,6 +4,7 @@
 /usr/local/include/ANASIR/Madgwick_Filter.h
 /usr/local/include/ANASIR/Mahony_Filter.h
 /usr/local/include/ANASIR/helpers.h
+/usr/local/include/ANASIR/integrator.h
 /usr/local/lib/libanasirlib.a
 /usr/local/lib/cmake/ANASIR/anasir-targets.cmake
 /usr/local/lib/cmake/ANASIR/anasir-targets-noconfig.cmake

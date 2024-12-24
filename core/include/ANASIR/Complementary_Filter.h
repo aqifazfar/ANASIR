@@ -4,6 +4,7 @@
  * ANASIR's implementation
  *********************************************/
 #include <cstdint>
+#include <cstring>
 namespace anasir
 {
 
@@ -11,23 +12,21 @@ namespace anasir
   class CF
   {
   private:
-    T x[n]; /**<States Vector ; n * 1>*/
-    T z[n]; /**<Measurement Vector ; n * 1>*/
-    T ALPHA;
+    double x[n]; /**<States Vector ; n * 1>*/
+    double z[n]; /**<Measurement Vector ; n * 1>*/
+    double ALPHA;
 
   public:
-    void setCF(T (&x)[n], T (&z)[n], T ALPHA)
+    void setCF(double (&x)[n], double (&z)[n], double ALPHA)
     {
-      std::memset(x, x, sizeof(x));
-      std::memset(z, z, sizeof(z));
+      std::memset(this->x, x, sizeof(x));
+      std::memset(this->z, z, sizeof(z));
       ALPHA = ALPHA;
     }
     void Complementary_Filter()
     {
 
-      std::uint32_t i;
-
-      for (i = 0; i < (n); i++)
+      for (std::uint32_t i = 0; i < (n); i++)
       {
         x[i] = ALPHA * x[i] + (1 - ALPHA) * z[i];
       }

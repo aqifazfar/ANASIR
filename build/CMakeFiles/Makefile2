@@ -65,15 +65,18 @@ CMAKE_BINARY_DIR = /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/bu
 # The main recursive "all" target.
 all: CMakeFiles/anasirlib.dir/all
 all: core/all
+all: tests/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
 preinstall: core/preinstall
+preinstall: tests/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
 clean: CMakeFiles/anasirlib.dir/clean
 clean: core/clean
+clean: tests/clean
 .PHONY : clean
 
 #=============================================================================
@@ -90,6 +93,54 @@ core/preinstall:
 # Recursive "clean" directory target.
 core/clean:
 .PHONY : core/clean
+
+#=============================================================================
+# Directory level rules for directory tests
+
+# Recursive "all" directory target.
+tests/all: tests/CF/all
+tests/all: tests/EKF/all
+.PHONY : tests/all
+
+# Recursive "preinstall" directory target.
+tests/preinstall: tests/CF/preinstall
+tests/preinstall: tests/EKF/preinstall
+.PHONY : tests/preinstall
+
+# Recursive "clean" directory target.
+tests/clean: tests/CF/clean
+tests/clean: tests/EKF/clean
+.PHONY : tests/clean
+
+#=============================================================================
+# Directory level rules for directory tests/CF
+
+# Recursive "all" directory target.
+tests/CF/all: tests/CF/CMakeFiles/main.dir/all
+.PHONY : tests/CF/all
+
+# Recursive "preinstall" directory target.
+tests/CF/preinstall:
+.PHONY : tests/CF/preinstall
+
+# Recursive "clean" directory target.
+tests/CF/clean: tests/CF/CMakeFiles/main.dir/clean
+.PHONY : tests/CF/clean
+
+#=============================================================================
+# Directory level rules for directory tests/EKF
+
+# Recursive "all" directory target.
+tests/EKF/all: tests/EKF/CMakeFiles/testEKF.dir/all
+.PHONY : tests/EKF/all
+
+# Recursive "preinstall" directory target.
+tests/EKF/preinstall:
+.PHONY : tests/EKF/preinstall
+
+# Recursive "clean" directory target.
+tests/EKF/clean: tests/EKF/CMakeFiles/testEKF.dir/clean
+.PHONY : tests/EKF/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/anasirlib.dir
@@ -116,6 +167,58 @@ anasirlib: CMakeFiles/anasirlib.dir/rule
 CMakeFiles/anasirlib.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/anasirlib.dir/build.make CMakeFiles/anasirlib.dir/clean
 .PHONY : CMakeFiles/anasirlib.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CF/CMakeFiles/main.dir
+
+# All Build rule for target.
+tests/CF/CMakeFiles/main.dir/all: CMakeFiles/anasirlib.dir/all
+	$(MAKE) $(MAKESILENT) -f tests/CF/CMakeFiles/main.dir/build.make tests/CF/CMakeFiles/main.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests/CF/CMakeFiles/main.dir/build.make tests/CF/CMakeFiles/main.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/CMakeFiles --progress-num=2,3 "Built target main"
+.PHONY : tests/CF/CMakeFiles/main.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CF/CMakeFiles/main.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/CMakeFiles 3
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CF/CMakeFiles/main.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/CMakeFiles 0
+.PHONY : tests/CF/CMakeFiles/main.dir/rule
+
+# Convenience name for target.
+main: tests/CF/CMakeFiles/main.dir/rule
+.PHONY : main
+
+# clean rule for target.
+tests/CF/CMakeFiles/main.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests/CF/CMakeFiles/main.dir/build.make tests/CF/CMakeFiles/main.dir/clean
+.PHONY : tests/CF/CMakeFiles/main.dir/clean
+
+#=============================================================================
+# Target rules for target tests/EKF/CMakeFiles/testEKF.dir
+
+# All Build rule for target.
+tests/EKF/CMakeFiles/testEKF.dir/all: CMakeFiles/anasirlib.dir/all
+	$(MAKE) $(MAKESILENT) -f tests/EKF/CMakeFiles/testEKF.dir/build.make tests/EKF/CMakeFiles/testEKF.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests/EKF/CMakeFiles/testEKF.dir/build.make tests/EKF/CMakeFiles/testEKF.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/CMakeFiles --progress-num=4,5 "Built target testEKF"
+.PHONY : tests/EKF/CMakeFiles/testEKF.dir/all
+
+# Build rule for subdir invocation for target.
+tests/EKF/CMakeFiles/testEKF.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/CMakeFiles 3
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/EKF/CMakeFiles/testEKF.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/CMakeFiles 0
+.PHONY : tests/EKF/CMakeFiles/testEKF.dir/rule
+
+# Convenience name for target.
+testEKF: tests/EKF/CMakeFiles/testEKF.dir/rule
+.PHONY : testEKF
+
+# clean rule for target.
+tests/EKF/CMakeFiles/testEKF.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests/EKF/CMakeFiles/testEKF.dir/build.make tests/EKF/CMakeFiles/testEKF.dir/clean
+.PHONY : tests/EKF/CMakeFiles/testEKF.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

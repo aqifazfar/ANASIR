@@ -49,6 +49,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
     "/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/core/include/ANASIR/Madgwick_Filter.h"
     "/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/core/include/ANASIR/Mahony_Filter.h"
     "/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/core/include/ANASIR/helpers.h"
+    "/mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/core/include/ANASIR/integrator.h"
     )
 endif()
 

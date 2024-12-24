@@ -132,14 +132,14 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/CMakeFiles /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build//CMakeFiles/progress.marks
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
+	cd /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build && $(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/CMakeFiles /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/tests/EKF//CMakeFiles/progress.marks
+	cd /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/EKF/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 clean
+	cd /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/EKF/clean
 .PHONY : clean
 
 # The main clean target
@@ -148,57 +148,56 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 preinstall
+	cd /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/EKF/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 preinstall
+	cd /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/EKF/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
-#=============================================================================
-# Target rules for targets named anasirlib
+# Convenience name for target.
+tests/EKF/CMakeFiles/testEKF.dir/rule:
+	cd /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/EKF/CMakeFiles/testEKF.dir/rule
+.PHONY : tests/EKF/CMakeFiles/testEKF.dir/rule
 
-# Build rule for target.
-anasirlib: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 anasirlib
-.PHONY : anasirlib
-
-# fast build rule for target.
-anasirlib/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/anasirlib.dir/build.make CMakeFiles/anasirlib.dir/build
-.PHONY : anasirlib/fast
-
-#=============================================================================
-# Target rules for targets named main
-
-# Build rule for target.
-main: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 main
-.PHONY : main
-
-# fast build rule for target.
-main/fast:
-	$(MAKE) $(MAKESILENT) -f tests/CF/CMakeFiles/main.dir/build.make tests/CF/CMakeFiles/main.dir/build
-.PHONY : main/fast
-
-#=============================================================================
-# Target rules for targets named testEKF
-
-# Build rule for target.
-testEKF: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 testEKF
+# Convenience name for target.
+testEKF: tests/EKF/CMakeFiles/testEKF.dir/rule
 .PHONY : testEKF
 
 # fast build rule for target.
 testEKF/fast:
-	$(MAKE) $(MAKESILENT) -f tests/EKF/CMakeFiles/testEKF.dir/build.make tests/EKF/CMakeFiles/testEKF.dir/build
+	cd /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build && $(MAKE) $(MAKESILENT) -f tests/EKF/CMakeFiles/testEKF.dir/build.make tests/EKF/CMakeFiles/testEKF.dir/build
 .PHONY : testEKF/fast
+
+testEKF.o: testEKF.cpp.o
+.PHONY : testEKF.o
+
+# target to build an object file
+testEKF.cpp.o:
+	cd /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build && $(MAKE) $(MAKESILENT) -f tests/EKF/CMakeFiles/testEKF.dir/build.make tests/EKF/CMakeFiles/testEKF.dir/testEKF.cpp.o
+.PHONY : testEKF.cpp.o
+
+testEKF.i: testEKF.cpp.i
+.PHONY : testEKF.i
+
+# target to preprocess a source file
+testEKF.cpp.i:
+	cd /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build && $(MAKE) $(MAKESILENT) -f tests/EKF/CMakeFiles/testEKF.dir/build.make tests/EKF/CMakeFiles/testEKF.dir/testEKF.cpp.i
+.PHONY : testEKF.cpp.i
+
+testEKF.s: testEKF.cpp.s
+.PHONY : testEKF.s
+
+# target to generate assembly for a file
+testEKF.cpp.s:
+	cd /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build && $(MAKE) $(MAKESILENT) -f tests/EKF/CMakeFiles/testEKF.dir/build.make tests/EKF/CMakeFiles/testEKF.dir/testEKF.cpp.s
+.PHONY : testEKF.cpp.s
 
 # Help Target
 help:
@@ -212,9 +211,10 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... anasirlib"
-	@echo "... main"
 	@echo "... testEKF"
+	@echo "... testEKF.o"
+	@echo "... testEKF.i"
+	@echo "... testEKF.s"
 .PHONY : help
 
 
@@ -226,6 +226,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /mnt/c/Users/aqifa/OneDrive/Desktop/personal/projek/ANASIR/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

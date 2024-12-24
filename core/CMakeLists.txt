@@ -9,7 +9,8 @@ target_sources(anasirlib PRIVATE
                include/ANASIR/Extended_Kalman_Filter.h 
                include/ANASIR/Madgwick_Filter.h 
                include/ANASIR/Mahony_Filter.h 
-               include/ANASIR/helpers.h)
+               include/ANASIR/helpers.h
+               include/ANASIR/integrator.h)
 
 install(FILES
         include/ANASIR/Complementary_Filter.h
@@ -17,6 +18,7 @@ install(FILES
         include/ANASIR/Madgwick_Filter.h
         include/ANASIR/Mahony_Filter.h
         include/ANASIR/helpers.h
+        include/ANASIR/integrator.h
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/ANASIR")
 
 

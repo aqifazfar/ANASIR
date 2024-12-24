@@ -5,7 +5,7 @@ project(ANASIR VERSION 1.0.0)
 add_library(anasirlib)
 add_library(ANASIR::anasirlib ALIAS anasirlib)
 
-option(BUILD_TEST "Build Test Files" OFF)
+option(BUILD_TESTS "Build Test Files" OFF)
 
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/cmake/anasir-config.cmake"
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/ANASIR")

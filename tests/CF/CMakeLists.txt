@@ -1,4 +1,4 @@
-project(testCF)
+project(testCF LANGUAGES CXX)
 
 add_executable(main testCF.cpp)
 
