@@ -2,7 +2,7 @@
 
 *ANASIR Library is part of the BUMANTARA-SDK which implement the filter and approximation algorithms.*
 
-## Implemented Filter Algorithms
+### Filter Algorithms
 
 - Complementary Filter
 * Madgwick Filter
