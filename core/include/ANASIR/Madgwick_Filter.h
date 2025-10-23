@@ -111,11 +111,11 @@ namespace anasir
       Norm(df, 4);
 
       // Scale with Beta
-      for (std::uint8_t i = 0; i < 4; i++)
-      {
-
-        df[i] *= Beta;
-      }
+      df[0] *= Beta;
+      df[1] *= Beta;
+      df[2] *= Beta;
+      df[3] *= Beta;
+      
 
       // Integrate rate of change of quaternion
       q[0] += (qg0 - df[0]) * dt;
@@ -202,11 +202,10 @@ namespace anasir
       Norm(df, 4);
 
       // Scale with Beta
-      for (std::uint8_t i = 0; i < 4; i++)
-      {
-
-        df[i] *= Beta;
-      }
+      df[0] *= Beta;
+      df[1] *= Beta;
+      df[2] *= Beta;
+      df[3] *= Beta;
 
       // Integrate rate of change of quaternion
       q[0] += (qg0 - df[0]) * dt;
