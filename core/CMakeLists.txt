@@ -5,20 +5,21 @@ target_include_directories(anasirlib PUBLIC
                            $<INSTALL_INTERFACE:include>)
 
 target_sources(anasirlib PRIVATE 
-               include/ANASIR/Complementary_Filter.h 
-               include/ANASIR/Extended_Kalman_Filter.h 
-               include/ANASIR/Madgwick_Filter.h 
-               include/ANASIR/Mahony_Filter.h 
-               include/ANASIR/helpers.h
-               include/ANASIR/integrator.h)
+               include/ANASIR/Complementary_Filter 
+               include/ANASIR/Extended_Kalman_Filter 
+               include/ANASIR/Madgwick_Filter 
+               include/ANASIR/Mahony_Filter 
+               include/ANASIR/integrator.h
+               include/ANASIR/anasir_types.h)
 
 install(FILES
-        include/ANASIR/Complementary_Filter.h
-        include/ANASIR/Extended_Kalman_Filter.h
-        include/ANASIR/Madgwick_Filter.h
-        include/ANASIR/Mahony_Filter.h
-        include/ANASIR/helpers.h
+        include/ANASIR/Complementary_Filter
+        include/ANASIR/Extended_Kalman_Filter
+        include/ANASIR/Madgwick_Filter
+        include/ANASIR/Mahony_Filter
         include/ANASIR/integrator.h
+        include/ANASIR/anasir_types.h
+        include/ANASIR/helpers.h
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/ANASIR")
 
 

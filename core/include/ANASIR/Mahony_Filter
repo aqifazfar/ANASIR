@@ -1,0 +1,184 @@
+/*!*******************************************
+ * @file Mahony_Filter.h
+ * @brief This file contains the definitions of    * functions used in Mahony Filter
+ * ANASIR's implementation
+ *********************************************/
+
+#include <cstdint>
+#include <cmath>
+#include <algorithm>
+
+#include "helpers.h"
+#include "anasir_types.h"
+namespace anasir
+{
+
+  template <typename T>
+  class Mahony_Filter
+  {
+  private:
+    anasir_states<T, 4> q;
+    T Kp;
+    T Ki;
+    T dt;
+    T alpha;
+
+  public:
+    Mahony_Filter(T const &Kp = 5.0, T const &Ki = 0.1, T const &dt = 0.01, T const &alpha = 0.99)
+    {
+      this->Kp = Kp;
+      this->Ki = Ki;
+      this->dt = dt;
+      this->alpha = alpha;
+      q[0] = 1.00;
+      q[1] = 0.00;
+      q[2] = 0.00;
+      q[3] = 0.00;
+    }
+
+    inline anasir_states<T, 4> &Mahony_Filter_IMU(T (&acc)[3], T (&gyro)[3])
+    {
+
+      T vx, vy, vz, error[3];
+      std::uint8_t i;
+
+      // Compute only when accelerometer data are available
+      if (acc[0] == 0.0 && acc[1] == 0.0 && acc[2] == 0.0)
+      {
+
+        return q;
+      }
+
+      // anasir:: Normalize_Vector<T,4>ald accelerometer
+      anasir::Normalize_Vector<T, 3>(acc);
+
+      // Estimate direction of gravity, V
+      vx = 2 * (q[1] * q[3] - q[0] * q[2]);
+
+      vy = 2 * (q[0] * q[1] + q[2] * q[3]);
+
+      vz = q[0] * q[0] - q[1] * q[1] - q[2] * q[2] + q[3] * q[3];
+
+      // Calculate error using cross-product
+      //  a x v
+      error[0] = acc[1] * vz - acc[2] * vy;
+      error[1] = acc[2] * vx - acc[0] * vz;
+      error[2] = acc[0] * vy - acc[1] * vx;
+
+      // Update Gyroscope measurements
+      // w = w + Kp * w + Ki * w
+      T integral_error[3] = {};
+      T max_integral_error = 1.0;
+      for (i = 0; i < 3; i++)
+      {
+        // LPF
+        integral_error[i] = alpha * integral_error[i] + (1 - alpha) * error[i] * dt;
+
+        // Integral Windup Protection
+        std::clamp(integral_error[i], -max_integral_error, max_integral_error);
+
+        gyro[i] += Kp * error[i] + Ki * integral_error[i];
+      }
+
+      // Update Quaternion
+      q[0] += 0.5 * dt * (-q[1] * gyro[0] - q[2] * gyro[1] - q[3] * gyro[2]);
+
+      q[1] += 0.5 * dt * (q[0] * gyro[0] + q[2] * gyro[2] - q[3] * gyro[1]);
+
+      q[2] += 0.5 * dt * (q[0] * gyro[1] - q[1] * gyro[2] + q[3] * gyro[0]);
+
+      q[3] += 0.5 * dt * (q[0] * gyro[2] + q[1] * gyro[1] - q[2] * gyro[0]);
+
+      anasir::Normalize_Vector<T, 4>(q.x);
+
+      return q;
+    }
+
+    inline anasir_states<T, 4> Mahony_Filter_AHRS(T (&acc)[3], T (&gyro)[3], T (&mag)[3])
+    {
+
+      // Compute only when accelerometer data are available
+      if (acc[0] == 0.0 && acc[1] == 0.0 && acc[2] == 0.0)
+      {
+
+        return q;
+      }
+
+      // Use IMU algorithm if mx,my and mz is invalid
+      if (mag[0] == 0.0 && mag[1] == 0.0 && mag[2] == 0.0)
+      {
+        return Mahony_Filter_IMU(acc, gyro);
+      }
+
+      anasir::Normalize_Vector<T, 3>(acc);
+      anasir::Normalize_Vector<T, 3>(mag);
+
+      T vx, vy, vz, hx, hy, bx, bz, wx, wy, wz, error[3];
+      std::uint8_t i;
+
+      // Compute reference direction of earth magnetic field, B
+
+      hx = 2.0 * (mag[0] * (0.5 - q[2] * q[2] - q[3] * q[3]) + mag[1] * (q[1] * q[2] - q[0] * q[3]) + mag[2] * (q[1] * q[3] + q[0] * q[2]));
+
+      hy = 2.0 * (mag[0] * (q[1] * q[2]) + mag[1] * (0.5 - (q[1] * q[1] - q[3] * q[3]) + mag[2] * (q[2] * q[3])));
+
+      bx = std::sqrt(hx * hx + hy * hy);
+
+      bz = 2.0 * (mag[0] * (q[1] * q[3] - q[0] * q[2]) + mag[1] * (q[2] * q[3] + q[0] * q[1]) + mag[2] * (0.5 - q[1] * q[1] - q[2] * q[2]));
+
+      // Estimate direction of gravity, V
+      vx = 2.0 * (q[1] * q[3] - q[0] * q[2]);
+
+      vy = 2.0 * (q[0] * q[1] + q[2] * q[3]);
+
+      vz = q[0] * q[0] - q[1] * q[1] - q[2] * q[2] + q[3] * q[3];
+
+      // Estimate direction of magnetic field , W
+
+      wx = 2.0 * (bx * (0.5 - q[2] * q[2] - q[3] * q[3]) + bz * (q[1] * q[3] - q[0] * q[2])) - mag[0];
+
+      wy = 2.0 * (bx * (q[1] * q[2] - q[0] * q[3]) + bz * (q[0] * q[1] + q[2] * q[3])) - mag[1];
+
+      wz = 2.0 * (bx * (q[0] * q[2] + q[1] * q[3]) + bz * (0.5 - (q[1] * q[1] - q[2] * q[2])) - mag[2]);
+
+      // Calculate error using cross-product
+      //  ea = a x v and em = m  x w
+      //  error = ea + em
+
+      error[0] = (acc[1] * vz - acc[2] * vy) + (mag[1] * wz - mag[2] * wy);
+
+      error[1] = (acc[2] * vx - acc[0] * vz) + (mag[2] * wx - mag[0] * wz);
+
+      error[2] = (acc[0] * vy - acc[1] * vx) + (mag[0] * wy - mag[1] * wx);
+
+      // Update Gyroscope measurements
+      // w = w + Kp * w + Ki * w
+      T(integral_error)
+      [3] = {};
+      T max_integral_error = 1.0;
+      for (i = 0; i < 3; i++)
+      {
+        // LPF
+        integral_error[i] = alpha * integral_error[i] + (1 - alpha) * error[i] * dt;
+
+        // Integral Windup Protection
+        std::clamp(integral_error[i], -max_integral_error, max_integral_error);
+
+        gyro[i] += Kp * error[i] + Ki * integral_error[i];
+      }
+
+      // Update Quaternion
+      q[0] += 0.5 * dt * (-q[1] * gyro[0] - q[2] * gyro[1] - q[3] * gyro[2]);
+
+      q[1] += 0.5 * dt * (q[0] * gyro[0] + q[2] * gyro[2] - q[3] * gyro[1]);
+
+      q[2] += 0.5 * dt * (q[0] * gyro[1] - q[1] * gyro[2] + q[3] * gyro[0]);
+
+      q[3] += 0.5 * dt * (q[0] * gyro[2] + q[1] * gyro[1] - q[2] * gyro[0]);
+
+      anasir::Normalize_Vector<T, 4>(q.x);
+
+      return q; // success
+    }
+  };
+} // namespace anasir

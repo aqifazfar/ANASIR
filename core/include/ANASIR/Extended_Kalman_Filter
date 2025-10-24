@@ -1,0 +1,82 @@
+
+#include <cstdint>
+#include <iostream>
+#include <algorithm>
+
+#include <eigen3/Eigen/Dense>
+
+#include "anasir_types.h"
+
+template <typename T, std::uint32_t nStates, std::uint32_t nMeasurements>
+class EKF
+{
+private:
+    anasir_states<T, nStates> x;
+    Eigen::Matrix<T, nStates, nStates> P;
+    Eigen::Matrix<T, nStates, nStates> Q;
+    Eigen::Matrix<T, nMeasurements, nMeasurements> R;
+    T dt;
+
+public:
+    EKF(T const (&statesInit)[nStates], T const &pInit, T const &qInit, T const &rInit, T const &dt)
+    {
+        P.setZero();
+        Q.setZero();
+        R.setZero();
+
+        for (std::size_t i = 0; i < nStates; i++)
+        {
+            x[i] = statesInit[i];
+
+            P(i, i) = pInit;
+            Q(i, i) = qInit;
+        }
+
+        for (std::size_t i = 0; i < nMeasurements; i++)
+        {
+            R(i, i) = rInit;
+        }
+
+        this->dt = dt;
+    }
+
+    anasir_states<T, nStates> &Extended_Kalman_FIlter(T const (&fx)[nStates], T const (&F)[nStates * nStates], T const (&hx)[nMeasurements], T const (&H)[nMeasurements * nStates], T const (&z)[nMeasurements])
+    {
+        Eigen::Vector<T, nStates> x_temp;
+        Eigen::Matrix<T, nStates, nMeasurements> K;
+        Eigen::Matrix<T, nStates, nStates> I;
+
+        Eigen::Map<const Eigen::Vector<T, nStates>> _fx(fx);
+        Eigen::Map<const Eigen::Vector<T, nMeasurements>> _hx(hx);
+        Eigen::Map<const Eigen::Matrix<T, nStates, nStates, Eigen::RowMajor>> _F(F);
+        Eigen::Map<const Eigen::Matrix<T, nMeasurements, nStates, Eigen::RowMajor>> _H(H);
+        Eigen::Map<const Eigen::Vector<T, nMeasurements>> _z(z);
+
+        for (std::size_t i = 0; i < nStates; i++)
+        {
+            x_temp(i) = x[i];
+        }
+
+        K.fill(0.00);
+        I.setIdentity();
+
+        // Prediction step
+        x_temp += _fx;
+
+        P = _F * P * _F.transpose() + Q;
+
+        // Update step
+        K = (P * _H.transpose()) * (_H * P * _H.transpose() + R).inverse();
+
+        x_temp += K * (_z - _hx);
+
+        P = (I - (K * _H)) * P;
+
+        for (std::size_t i = 0; i < nStates; i++)
+        {
+            x[i] = x_temp[i];
+        }
+
+        return x;
+    }
+};

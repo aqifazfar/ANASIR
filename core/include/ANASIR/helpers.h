@@ -1,31 +1,54 @@
 #include <cmath>
+#include <cstdint>
+#include <numeric>
 
-// void anasir::Quat_To_Euler(double roll, double pitch, double yaw, double *q)
-// {
+#include "anasir_types.h"
+namespace anasir
+{
 
-//     double qwqy = q[0] * q[2];
-//     double qxqz = q[1] * q[3];
+    template <typename T, std::uint32_t n>
+    void Normalize_Vector(T (&x)[n])
+    {
+        T sum = std::accumulate(x, x + n, 0.0, [](T accumulate, T element)
+                                { return accumulate + element * element; });
 
-//     double test = q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3];
-//     double unit = q[1] * q[2] + q[3] * q[0];
+        if (sum == 0.0)
+        {
+            // Skip normalization
+            return;
+        }
 
-//     if (test > (0.499f * unit))
-//     {
+        T magnitude = std::sqrt(sum);
 
-//         roll = 0.00f;
-//         pitch = acos(0.00f);
-//         yaw = 2 * std::atan2(q[1], q[0]);
-//     }
-//     else if (test < (0.499f * unit))
-//     {
-//         roll = 0.00f;
-//         pitch = -acos(0.00f);
-//         yaw = -2 * std::atan2(q[1], q[0]);
-//     }
-//     else
-//     {
-//         roll = std::atan2(2 * (q[0] * q[1] + q[2] * q[3]), 1 - 2 * (q[1] * q[1] + q[2] * q[2]));
-//         pitch = std::asin(2 * (qwqy - qxqz));
-//         yaw = std::atan2(2 * (q[0] * q[3] + q[1] * q[2]), 1 - 2 * (q[2] * q[2] + q[3] * q[3]));
-//     }
-// }
+        for (std::uint32_t i = 0; i < n; i++)
+        {
+            x[i] = x[i] / magnitude;
+        }
+    }
+
+    template <typename T>
+    anasir_states<T, 3> quat_To_Euler(anasir_states<T, 4> const &q)
+    {
+        anasir_states<T, 3> states;
+
+        // Roll
+        states[0] = std::atan2(2.0 * (q[0] * q[1] + q[2] * q[3]), 1.0 - 2.0 * (q[1] * q[1] + q[2] * q[2]));
+
+        // test pitch
+        T test = 2.0 * (q[0] * q[2] - q[3] * q[1]);
+
+        if (std::abs(test) >= 1.0)
+        {
+            states[1] = -std::copysign(M_PI / 2.0, test);
+        }
+        else
+        {
+            states[1] = -std::asin(test);
+        }
+
+        // Yaw
+        states[2] = -std::atan2(2.0 * (q[0] * q[3] + q[1] * q[2]), 1.0 - 2.0 * (q[2] * q[2] + q[3] * q[3]));
+
+        return states;
+    }
+} // namespace anasir

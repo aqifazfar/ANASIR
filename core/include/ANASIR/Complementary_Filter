@@ -1,0 +1,21 @@
+#include <cstdint>
+#include "anasir_types.h"
+
+template <typename T, std::uint32_t n>
+class Complementary_Filter
+{
+private:
+    anasir_states<T, n> states;
+    T alpha;
+
+public:
+    explicit Complementary_Filter(T const &alpha) : alpha(alpha) {}
+
+    inline anasir_states<T, n> &Complementary_Filter_Run(T const (&model)[n], T const (&measurements)[n])
+    {
+        std::transform(model, model + n, measurements, states.x, [&](T a, T b)
+                       { return alpha * a + (1 - alpha) * b; });
+
+        return states;
+    }
+};

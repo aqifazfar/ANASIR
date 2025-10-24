@@ -1,0 +1,190 @@
+/*!*******************************************
+ * @file Madgwick_Filter.h
+ * @brief
+ * This file contains the definitions of                * functions used in Madgwick Filter ANASIR's
+ * implementation
+ *********************************************/
+
+#include <cstdint>
+#include <cmath>
+#include <cstring>
+
+#include "helpers.h"
+#include "anasir_types.h"
+
+#define SQR(x) (x * x)
+namespace anasir
+{
+
+  template <typename T>
+  class Madgwick_Filter
+  {
+  private:
+    anasir_states<T, 4> q;
+    T Beta;
+    T dt;
+
+  public:
+    Madgwick_Filter(T const &Beta, T const &dt)
+    {
+      this->dt = dt;
+      this->Beta = Beta;
+
+      q[0] = 1.00;
+      q[1] = 0.00;
+      q[2] = 0.00;
+      q[3] = 0.00;
+    }
+
+    inline anasir_states<T, 4> Madgwick_Filter_IMU(T (&acc)[3], T const (&gyro)[3])
+    {
+
+      // Compute only when accelerometer data   are available
+      if (acc[0] == 0.0 && acc[1] == 0.0 && acc[2] == 0.0)
+      {
+
+        return q;
+      }
+
+      // Normalize Vector accelerometer
+      anasir::Normalize_Vector<T, 3>(acc);
+
+      // Orientation increment from gyroscope
+      T qg0, qg1, qg2, qg3;
+
+      qg0 = 0.5 * (-q[1] * gyro[0] - q[2] * gyro[1] - q[3] * gyro[2]);
+
+      qg1 = 0.5 * (q[0] * gyro[0] + q[2] * gyro[2] - q[3] * gyro[1]);
+
+      qg2 = 0.5 * (q[0] * gyro[1] - q[1] * gyro[2] + q[3] * gyro[0]);
+
+      qg3 = 0.5 * (q[0] * gyro[2] + q[1] * gyro[1] - q[2] * gyro[0]);
+
+      // Gradient Descent Algorithm
+      T df[4], f[3];
+
+      // Compute f(q , a)
+      f[0] = 2.0 * (q[1] * q[3] - q[0] * q[2]) - acc[0];
+
+      f[1] = 2.0 * (q[0] * q[1] + q[2] * q[3]) - acc[1];
+
+      f[2] = 2.0 * (0.5 - SQR(q[1]) - SQR(q[2])) - acc[2];
+
+      // Compute delta f
+      df[0] = (-2.0 * q[2] * f[0]) + (2.0 * q[1] * f[1]);
+
+      df[1] = (2.0 * q[3] * f[0]) + (2.0 * q[0] * f[1]) + (-4.0f * q[1] * f[2]);
+
+      df[2] = (-2.0 * q[0] * f[0]) + (2.0 * q[3] * f[1]) + (-4.0f * q[2] * f[2]);
+
+      df[3] = (2.0 * q[1] * f[0]) + (2.0 * q[2] * f[1]);
+
+      anasir::Normalize_Vector<T, 4>(df);
+
+      // Scale with Beta
+      for (std::uint8_t i = 0; i < 4; i++)
+      {
+
+        df[i] *= Beta;
+      }
+
+      // Integrate rate of change of quaternion
+      q[0] += (qg0 - df[0]) * dt;
+      q[1] += (qg1 - df[1]) * dt;
+      q[2] += (qg2 - df[2]) * dt;
+      q[3] += (qg3 - df[3]) * dt;
+
+      // Normalize quaternion
+      anasir::Normalize_Vector<T, 4>(q.x);
+
+      return q; // success
+    }
+
+    inline anasir_states<T, 4> Madgwick_Filter_AHRS(T (&acc)[3], T const (&gyro)[3], T (&mag)[3])
+    {
+
+      // Compute only when accelerometer data   are available
+      if (acc[0] == 0.0 && acc[1] == 0.0 && acc[2] == 0.0)
+      {
+        return q;
+      }
+
+      // Use IMU algorithm if mx,my and mz is invalid
+      if (mag[0] == 0.0 && mag[1] == 0.0 && mag[2] == 0.0)
+      {
+        return Madgwick_Filter_IMU(acc, gyro);
+      }
+      // anasir::anasir::Normalize_Vectoralized accelerometer and magnetometer
+      anasir::Normalize_Vector<T, 3>(acc);
+      anasir::Normalize_Vector<T, 3>(mag);
+
+      // Orientation increment from gyroscope
+      T qg0, qg1, qg2, qg3;
+
+      qg0 = 0.5 * (-q[1] * gyro[0] - q[2] * gyro[1] - q[3] * gyro[2]);
+
+      qg1 = 0.5 * (q[0] * gyro[0] + q[2] * gyro[2] - q[3] * gyro[1]);
+
+      qg2 = 0.5 * (q[0] * gyro[1] - q[1] * gyro[2] + q[3] * gyro[0]);
+
+      qg3 = 0.5 * (q[0] * gyro[2] + q[1] * gyro[1] - q[2] * gyro[0]);
+
+      // Compute reference direction of earth magnetic field, B
+      T hx, hy, bx, bz;
+
+      hx = 2.0 * (mag[0] * (0.5 - SQR(q[2]) - SQR(q[3])) + mag[1] * (q[1] * q[2] - q[0] * q[3]) + mag[2] * (q[1] * q[3] + q[0] * q[2]));
+
+      hy = 2.0 * (mag[0] * (q[1] * q[2]) + mag[1] * (0.5 - SQR(q[1]) - SQR(q[3])) + mag[2] * (q[2] * q[3]));
+
+      bx = std::sqrt((SQR(hx) + SQR(hy)));
+
+      bz = 2.0 * (mag[0] * (q[1] * q[3] - q[0] * q[2]) + mag[1] * (q[2] * q[3] + q[0] * q[1]) + mag[2] * (0.5 - SQR(q[1]) - SQR(q[2])));
+
+      // Gradient Descent Algorithm
+      T df[4], fqacc[3], fqmag[3];
+
+      // Compute f(q,a)
+      fqacc[0] = 2.0 * (q[1] * q[3] - q[0] * q[2]) - acc[0];
+
+      fqacc[1] = 2.0 * (q[0] * q[1] + q[2] * q[3]) - acc[1];
+
+      fqacc[2] = 2.0 * (0.5 - SQR(q[1]) - SQR(q[2])) - acc[2];
+
+      // Compute f(q,m)
+      fqmag[0] = 2.0 * (bx * (0.5 - SQR(q[2]) - SQR(q[3])) + bz * (q[1] * q[3] - q[0] * q[2])) - mag[0];
+
+      fqmag[1] = 2.0 * (bx * (q[1] * q[2] - q[0] * q[3]) + bz * (q[0] * q[1] + q[2] * q[3])) - mag[1];
+
+      fqmag[2] = 2.0 * (bx * (q[0] * q[2] + q[1] * q[3]) + bz * (0.5 - SQR(q[1]) - SQR(q[2]))) - mag[2];
+
+      // Compute delta f
+      df[0] = 2.0 * (-q[2] * fqacc[0] + q[1] * fqacc[1]) + 2.0 * (-bz * q[2] * fqmag[0] + (-bx * q[3] + bz * q[1]) * fqmag[1] + bx * q[2] * fqmag[2]);
+
+      df[1] = 2.0 * (q[3] * fqacc[0] + q[0] * fqacc[1] - 2.0 * q[1] * fqacc[2]) + 2.0 * (bz * q[3] * fqmag[0] + (bx * q[2] + bz * q[0]) * fqmag[1] + (bx * q[3] - 2.0 * bz * q[1]) * fqmag[2]);
+
+      df[2] = 2.0 * (-q[0] * fqacc[0] + q[3] * fqacc[1] - 2.0 * q[2] * fqacc[2]) + 2.0 * ((-2.0 * bx * q[2] - bz * q[0]) * fqmag[0] + (bx * q[1] + bz * q[3]) * fqmag[1] + (bx * q[0] - 2.0 * bz * q[2]) * fqmag[2]);
+
+      df[3] = 2.0 * (q[1] * fqacc[0] + q[2] * fqacc[1]) + 2.0 * ((-2.0 * bx * q[3] + bz * q[1]) * fqmag[0] + (-bx * q[0] + bz * q[2]) * fqmag[1] + bx * q[1] * fqmag[2]);
+
+      anasir::Normalize_Vector<T, 4>(df);
+
+      // Scale with Beta
+      for (std::uint8_t i = 0; i < 4; i++)
+      {
+
+        df[i] *= Beta;
+      }
+
+      // Integrate rate of change of quaternion
+      q[0] += (qg0 - df[0]) * dt;
+      q[1] += (qg1 - df[1]) * dt;
+      q[2] += (qg2 - df[2]) * dt;
+      q[3] += (qg3 - df[3]) * dt;
+
+      // Normalized quaternion
+      anasir::Normalize_Vector<T, 4>(q.x);
+
+      return q; // success
+    }
+  };
+} // namespace anasir

@@ -1,10 +1,10 @@
 
 #include <iostream>
-#include "ANASIR/Complementary_Filter.h"
+#include "ANASIR/Complementary_Filter"
 
 int main()
 {
-    anasir::CF<5> compfilter;
+    Complementary_Filter<float, 5> compfilter(0.1);
 
     // NO NEED TO TEST DATA AS IT IS SIMPLE
 

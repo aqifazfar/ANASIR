@@ -4,7 +4,7 @@
 #include <functional>
 
 template <std::uint32_t NStates>
-void DOPRI(double (&x)[NStates], std::function<void(double (&)[NStates], double (&)[NStates])> odeFunc, double &dt)
+void DOPRI(double (&x)[NStates], std::function<void(double (&)[NStates], double (&)[NStates])> odeFunc, double const &dt)
 {
 
     double k[NStates][6] = {};
@@ -96,7 +96,7 @@ void DOPRI(double (&x)[NStates], std::function<void(double (&)[NStates], double 
 }
 
 template <std::uint32_t NStates>
-void RK4(double (&x)[NStates], std::function<void(double (&)[NStates], double (&)[NStates])> odeFunc, double dt)
+void RK4(double (&x)[NStates], std::function<void(double (&)[NStates], double (&)[NStates])> odeFunc, double const dt)
 {
 
     double k[NStates][6] = {};
@@ -141,7 +141,7 @@ void RK4(double (&x)[NStates], std::function<void(double (&)[NStates], double (&
 }
 
 template <std::uint32_t NStates>
-void Euler_Method(double (&x)[NStates], std::function<void(double (&)[NStates], double (&)[NStates])> odeFunc, double dt)
+void Euler_Method(double (&x)[NStates], std::function<void(double (&)[NStates], double (&)[NStates])> odeFunc, double const dt)
 {
 
     double xtemp[NStates] = {};
