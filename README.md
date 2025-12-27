@@ -8,4 +8,4 @@
 * Madgwick Filter
 + Mahony Filter
 - Extended Kalman Filter
-*Particle Filter (soon)
++Particle Filter (soon)
