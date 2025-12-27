@@ -1,6 +1,6 @@
 # ANASIR
 
-*ANASIR Library is part of the BUMANTARA-SDK which implement state estimation algorithms and drivers for sensors that are used by the Fulminare.*
+*ANASIR Library is a part of the BUMANTARA-SDK, which implements state estimation algorithms and drivers for sensors that are used by the Fulminare.*
 
 ### The algorithms included are:
 
