@@ -10,7 +10,7 @@ target_sources(anasirlib PRIVATE
                include/ANASIR/Madgwick_Filter 
                include/ANASIR/Mahony_Filter 
                include/ANASIR/integrator.h
-               include/ANASIR/anasir_types.h)
+               include/ANASIR/states.h)
 
 install(FILES
         include/ANASIR/Complementary_Filter

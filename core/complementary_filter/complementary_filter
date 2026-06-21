@@ -1,0 +1,51 @@
+#include <cstdint>
+#include <cmath>
+
+#define g 9.806650
+
+class Complementary_Filter
+{
+private:
+    double angle[3] = {0.0};
+    double pos[3] = {0.0};
+    double v[3] = {0.0};
+
+public:
+    Complementary_Filter() {}
+
+    inline void Complementary_Filter_Orientation(double const (&acc)[3], double const (&gyro)[3], double const (&mag)[3], double const &alpha, double const &dt)
+    {
+        double acc_roll = std::atan2(acc[1], acc[2]);
+        double acc_pitch = std::atan2(-acc[0], std::sqrt(acc[1] * acc[1] + acc[2] * acc[2]));
+
+        double mx_dot = mag[0] * std::cos(acc_pitch) + mag[2] * std::sin(acc_pitch);
+        double my_dot = mag[0] * std::sin(acc_roll) * std::sin(acc_pitch) + mag[1] * std::cos(acc_roll) - mag[2] * std::sin(acc_roll) * std::cos(acc_pitch);
+
+        double mag_yaw = std::atan2(-my_dot, mx_dot);
+
+        angle[0] = alpha * (angle[0] + gyro[0] * dt) + (1.0 - alpha) * acc_roll;
+        angle[1] = alpha * (angle[1] + gyro[1] * dt) + (1.0 - alpha) * acc_pitch;
+        angle[2] = alpha * (angle[2] + gyro[2] * dt) + (1.0 - alpha) * mag_yaw;
+    }
+
+    inline void Complementary_Filter_Translation(double const (&acc)[3], double const &sogGPS, double const &cogGPS, double const &alpha, double const &dt)
+    {
+        v[0] = alpha * (v[0] + g * acc[0] * dt) + (1 - alpha) * sogGPS * std::sin(cogGPS);
+        v[1] = alpha * (v[1] + g * acc[1] * dt) + (1 - alpha) * sogGPS * std::cos(cogGPS);
+        v[2] = v[2] + g * acc[2] * dt;
+
+        pos[0] += v[0] * dt;
+        pos[1] += v[1] * dt;
+        pos[2] += v[2] * dt;
+    }
+
+    inline double &Get_Velocity()
+    {
+        return *v;
+    }
+
+    inline double &Get_Position()
+    {
+        return *pos;
+    }
+};

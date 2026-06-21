@@ -1,0 +1,47 @@
+/**********************************CONVENTION**************************************S */
+// Symbols Represent Unit
+// acc = accelerometer g
+// a  = acceleration m/s^2
+// a_bias = accelerometer bias m/s^2
+// a_i = acceleration impulse m/s^2
+//
+// gyr = gyroscope rad/s
+// w = angular velocity rad/s
+// w_bias = gyroscope bias rad/s
+// w_i = angular velocity impulse rad/s
+//
+// v = velocity m/s
+// v_i = velocity impulse m/s
+//
+// pos = relative position m
+
+#include <cstdint>
+
+#include "integrator.h"
+#include "helpers.h"
+
+#define g 9.806650
+class EKF
+{
+private:
+    double q[4] = {1.0, 0.0, 0.0, 0.0}; // Quaternion
+    double v[3] = {0.0};                // ground velocity
+    double wind[3] = {0.0};             // wind velocity
+    double pos[3] = {0.0};              // relative position
+    double b[3] = {0.0};                // Earth reference magnetic vector
+    double b_a[3] = {0.0};              // bias accelerometer
+    double b_w[3] = {0.0};              // bias gyroscope
+    double b_m[3] = {0.0};              // hias magnetometer
+
+public:
+    EKF() {}
+
+    inline void EKF_Orientation(double const (&acc)[3], double const (&gyro)[3], double const (&mag)[3], double const &dt, Integrator_Type integrator)
+    {
+
+        if (integrator == EULER)
+        {
+            Euler_Method<4, 3>(q, gyro, dt, Quaternion_Dynamics);
+        }
+    }
+};

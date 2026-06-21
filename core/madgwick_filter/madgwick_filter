@@ -1,0 +1,183 @@
+/*!*******************************************
+ * @file Madgwick_Filter.h
+ * @brief
+ * This file contains the definitions of                * functions used in Madgwick Filter ANASIR's
+ * implementation
+ *********************************************/
+
+#include <cstdint>
+#include <cmath>
+#include <cstring>
+
+#include "helpers.h"
+
+class Madgwick_Filter
+{
+private:
+  double q[4];
+  double Beta;
+  double dt;
+
+public:
+  Madgwick_Filter(double const &Beta, double const &dt)
+  {
+    this->dt = dt;
+    this->Beta = Beta;
+
+    q[0] = 1.00;
+    q[1] = 0.00;
+    q[2] = 0.00;
+    q[3] = 0.00;
+  }
+
+  inline double &Madgwick_Filter_IMU(double (&acc)[3], double const (&gyr)[3])
+  {
+
+    // Compute only when accelerometer data   are available
+    if (acc[0] == 0.0 && acc[1] == 0.0 && acc[2] == 0.0)
+    {
+
+      return *q;
+    }
+
+    // Normalize Vector accelerometer
+    Normalize_Vector<3>(acc);
+
+    // Orientation increment from gyroscope
+    double qg0, qg1, qg2, qg3;
+
+    qg0 = 0.5 * (-q[1] * gyr[0] - q[2] * gyr[1] - q[3] * gyr[2]);
+
+    qg1 = 0.5 * (q[0] * gyr[0] + q[2] * gyr[2] - q[3] * gyr[1]);
+
+    qg2 = 0.5 * (q[0] * gyr[1] - q[1] * gyr[2] + q[3] * gyr[0]);
+
+    qg3 = 0.5 * (q[0] * gyr[2] + q[1] * gyr[1] - q[2] * gyr[0]);
+
+    // Gradient Descent Algorithm
+    double df[4], f[3];
+
+    // Compute f(q , a)
+    f[0] = 2.0 * (q[1] * q[3] - q[0] * q[2]) - acc[0];
+
+    f[1] = 2.0 * (q[0] * q[1] + q[2] * q[3]) - acc[1];
+
+    f[2] = 2.0 * (0.5 - q[1] * q[1] - q[2] * q[2]) - acc[2];
+
+    // Compute delta f
+    df[0] = (-2.0 * q[2] * f[0]) + (2.0 * q[1] * f[1]);
+
+    df[1] = (2.0 * q[3] * f[0]) + (2.0 * q[0] * f[1]) + (-4.0f * q[1] * f[2]);
+
+    df[2] = (-2.0 * q[0] * f[0]) + (2.0 * q[3] * f[1]) + (-4.0f * q[2] * f[2]);
+
+    df[3] = (2.0 * q[1] * f[0]) + (2.0 * q[2] * f[1]);
+
+    Normalize_Vector<4>(df);
+
+    // Scale with Beta
+    for (std::uint8_t i = 0; i < 4; i++)
+    {
+
+      df[i] *= Beta;
+    }
+
+    // Integrate rate of change of quaternion
+    q[0] += (qg0 - df[0]) * dt;
+    q[1] += (qg1 - df[1]) * dt;
+    q[2] += (qg2 - df[2]) * dt;
+    q[3] += (qg3 - df[3]) * dt;
+
+    // Normalize quaternion
+    Normalize_Vector<4>(q);
+
+    return *q; // success
+  }
+
+  inline double &Madgwick_Filter_AHRS(double (&acc)[3], double const (&gyr)[3], double (&mag)[3])
+  {
+
+    // Compute only when accelerometer data   are available
+    if (acc[0] == 0.0 && acc[1] == 0.0 && acc[2] == 0.0)
+    {
+      return *q;
+    }
+
+    // Use IMU algorithm if mx,my and mz is invalid
+    if (mag[0] == 0.0 && mag[1] == 0.0 && mag[2] == 0.0)
+    {
+      return Madgwick_Filter_IMU(acc, gyr);
+    }
+    // anasir::anasir::Normalize_Vectoralized accelerometer and magnetometer
+    Normalize_Vector<3>(acc);
+    Normalize_Vector<3>(mag);
+
+    // Orientation increment from gyroscope
+    double qg0, qg1, qg2, qg3;
+
+    qg0 = 0.5 * (-q[1] * gyr[0] - q[2] * gyr[1] - q[3] * gyr[2]);
+
+    qg1 = 0.5 * (q[0] * gyr[0] + q[2] * gyr[2] - q[3] * gyr[1]);
+
+    qg2 = 0.5 * (q[0] * gyr[1] - q[1] * gyr[2] + q[3] * gyr[0]);
+
+    qg3 = 0.5 * (q[0] * gyr[2] + q[1] * gyr[1] - q[2] * gyr[0]);
+
+    // Compute reference direction of earth magnetic field, B
+    double hx, hy, bx, bz;
+
+    hx = 2.0 * (mag[0] * (0.5 - q[2] * q[2] - q[3] * q[3]) + mag[1] * (q[1] * q[2] - q[0] * q[3]) + mag[2] * (q[1] * q[3] + q[0] * q[2]));
+
+    hy = 2.0 * (mag[0] * (q[1] * q[2]) + mag[1] * (0.5 - q[1] * q[1] - q[3] * q[3]) + mag[2] * (q[2] * q[3]));
+
+    bx = std::sqrt(hx * hx + hy * hy);
+
+    bz = 2.0 * (mag[0] * (q[1] * q[3] - q[0] * q[2]) + mag[1] * (q[2] * q[3] + q[0] * q[1]) + mag[2] * (0.5 - q[1] * q[1] - q[2] * q[2]));
+
+    // Gradient Descent Algorithm
+    double df[4], fqacc[3], fqmag[3];
+
+    // Compute f(q,a)
+    fqacc[0] = 2.0 * (q[1] * q[3] - q[0] * q[2]) - acc[0];
+
+    fqacc[1] = 2.0 * (q[0] * q[1] + q[2] * q[3]) - acc[1];
+
+    fqacc[2] = 2.0 * (0.5 - q[1] * q[1] - q[2] * q[2]) - acc[2];
+
+    // Compute f(q,m)
+    fqmag[0] = 2.0 * (bx * (0.5 - q[2] * q[2] - q[3] * q[3]) + bz * (q[1] * q[3] - q[0] * q[2])) - mag[0];
+
+    fqmag[1] = 2.0 * (bx * (q[1] * q[2] - q[0] * q[3]) + bz * (q[0] * q[1] + q[2] * q[3])) - mag[1];
+
+    fqmag[2] = 2.0 * (bx * (q[0] * q[2] + q[1] * q[3]) + bz * (0.5 - q[1] * q[1] - q[2] * q[2])) - mag[2];
+
+    // Compute delta f
+    df[0] = 2.0 * (-q[2] * fqacc[0] + q[1] * fqacc[1]) + 2.0 * (-bz * q[2] * fqmag[0] + (-bx * q[3] + bz * q[1]) * fqmag[1] + bx * q[2] * fqmag[2]);
+
+    df[1] = 2.0 * (q[3] * fqacc[0] + q[0] * fqacc[1] - 2.0 * q[1] * fqacc[2]) + 2.0 * (bz * q[3] * fqmag[0] + (bx * q[2] + bz * q[0]) * fqmag[1] + (bx * q[3] - 2.0 * bz * q[1]) * fqmag[2]);
+
+    df[2] = 2.0 * (-q[0] * fqacc[0] + q[3] * fqacc[1] - 2.0 * q[2] * fqacc[2]) + 2.0 * ((-2.0 * bx * q[2] - bz * q[0]) * fqmag[0] + (bx * q[1] + bz * q[3]) * fqmag[1] + (bx * q[0] - 2.0 * bz * q[2]) * fqmag[2]);
+
+    df[3] = 2.0 * (q[1] * fqacc[0] + q[2] * fqacc[1]) + 2.0 * ((-2.0 * bx * q[3] + bz * q[1]) * fqmag[0] + (-bx * q[0] + bz * q[2]) * fqmag[1] + bx * q[1] * fqmag[2]);
+
+    Normalize_Vector<4>(df);
+
+    // Scale with Beta
+    for (std::uint8_t i = 0; i < 4; i++)
+    {
+
+      df[i] *= Beta;
+    }
+
+    // Integrate rate of change of quaternion
+    q[0] += (qg0 - df[0]) * dt;
+    q[1] += (qg1 - df[1]) * dt;
+    q[2] += (qg2 - df[2]) * dt;
+    q[3] += (qg3 - df[3]) * dt;
+
+    // Normalized quaternion
+    Normalize_Vector<4>(q);
+
+    return *q; // success
+  }
+};
